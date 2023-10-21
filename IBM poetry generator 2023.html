@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IBM Poetry Generator</title>
+	<link rel="stylesheet" href="resources/ibmstyle.css">
+</head>
+<p><a href="about.html">About</a></p>
+<h1> IBM Poetry Generator </h1>
+<body>
+	<p> Step 1: Create your vocabulary </p>
+	<p> a = <input name="wordInput" type="text" id="a"></input> n = <input name="wordInput" type="text" id="n"></input></p>
+	<p>	b = <input name="wordInput" type="text" id="b"></input> o = <input name="wordInput" type="text" id="o"></input></p>
+	<p>	c = <input name="wordInput" type="text" id="c"></input> p = <input name="wordInput" type="text" id="p"></input></p>
+	<p>	d = <input name="wordInput" type="text" id="d"></input> q = <input name="wordInput" type="text" id="q"></input></p>
+	<p>	e = <input name="wordInput" type="text" id="e"></input> r = <input name="wordInput" type="text" id="r"></input></p>
+	<p>	f = <input name="wordInput" type="text" id="f"></input> s = <input name="wordInput" type="text" id="s"></input></p>
+	<p>	g = <input name="wordInput" type="text" id="g"></input> t = <input name="wordInput" type="text" id="t"></input></p>
+	<p>	h = <input name="wordInput" type="text" id="h"></input> u = <input name="wordInput" type="text" id="u"></input></p>
+	<p>	i = <input name="wordInput" type="text" id="i"></input> v = <input name="wordInput" type="text" id="v"></input></p>
+	<p>	j = <input name="wordInput" type="text" id="j"></input> w = <input name="wordInput" type="text" id="w"></input></p>
+	<p>	k = <input name="wordInput" type="text" id="k"></input> x = <input name="wordInput" type="text" id="x"></input></p>
+	<p>	l = <input name="wordInput" type="text" id="l"></input> y = <input name="wordInput" type="text" id="y"></input></p>
+	<p>	m = <input name="wordInput" type="text" id="m"></input> z = <input name="wordInput" type="text" id="z"></input></p>
+
+	<p> Step 2: </p>
+	<p> Enter a three-letter word or acronym: <input name="ibmInput" type="text" id="IBM" maxlength=3></input></p>
+
+	<p> Step 3: Generate! </p>
+	<button onclick="submitPoem()"> Submit </button>
+
+	<u><p id="title"></p></u>
+	<p id="line1"></p>
+	<p id="line2"></p>
+	<p id="line3"></p>
+	<p id="remaining_lines"></p>
+
+</body>
+	 <script>
+	 	// global variables
+	 	var dictionary = {"a":"","n":"","b":"","o":"","c":"","p":"","d":"","q":"","e":"","r":"","f":"","s":"","g":"","t":"","h":"","u":"","i":"","v":"","j":"","w":"","k":"","x":"","l":"","y":"","m":"","z":""};
+	 	// THIS DICTIONARY TRACKS EACH TIME A WORD APPEARS
+	 	// IT IS ACCESSED AND MANIPULATED EACH TIME MY NEXT WORD IS WRITTEN
+	 	// IDK IF THIS IS THE BEST WAY TO DO IT... BETTER THAN COUNTING AN ARRAY OVER AND OVER
+	 	var poem_words = {};
+
+	 	var title = "";
+	 	var title_array = [];
+	 	var line1 = "";
+	 	var line1_array = [];
+	 	var line2 = ""; 
+	 	var line2_array = [];
+	 	var line3 = "";
+	 	var line3_array = [];
+	 	var dynamic_line = "";
+
+	 	// take all the submitted words for use in the rest of the program.
+	 	function submitPoem(){
+	 		// ON SUBMIT: clear all global variables so values don't stagger
+	 		dictionary = {"a":"","n":"","b":"","o":"","c":"","p":"","d":"","q":"","e":"","r":"","f":"","s":"","g":"","t":"","h":"","u":"","i":"","v":"","j":"","w":"","k":"","x":"","l":"","y":"","m":"","z":""};
+	 		poem_words = {};
+	 		title = "";
+	 		title_array = [];
+	 		line1 = "";
+	 		line1_array = [];
+	 		line2 = ""; 
+	 		line2_array = [];
+	 		line3 = "";
+	 		line3_array = [];
+	 		dynamic_line = "";
+	 		document.getElementById("remaining_lines").innerHTML ="";
+
+	 		// the rest:
+	 		var i = 0;
+	 		var x = document.getElementsByName("wordInput");
+
+ 			for(let d in dictionary){
+ 				dictionary[d] = x[i].value.toString().toLowerCase();
+ 				i++;
+ 			}
+	 		generatePoem();
+	 	}
+
+	 	// the general formula of the poem is used multiple times,
+	 	// the first time does NOT have a variable amount of times it will loop, so I'm keeping that one (for now).
+	 	// the rest of the poem will call this, so I don't create multiple thing and manually change variable names
+	 	function poemFormula(array_name){
+	 		// each word in line 1 becomes its own line, need to dynamically create these since the number isn't fixed
+			for(let a in array_name){
+				dynamic_line = "";
+	 			for(let b in array_name[a]){
+	 				// add it to total word count dictionary:
+	 				if (poem_words[dictionary[array_name[a][b]]] >= 1) {
+	 					poem_words[dictionary[array_name[a][b]]] = poem_words[dictionary[array_name[a][b]]] + 1;
+	 				}
+	 				else poem_words[dictionary[array_name[a][b]]] = 1;
+
+	 				// add to the line
+	 				dynamic_line += "<span style= \"font-size: " + poem_words[dictionary[array_name[a][b]]].toString() + "ex\">" + dictionary[array_name[a][b]].toString() + "</span> ";
+	 				
+
+	 			}
+	 			dynamic_line += "<p></p>";
+	 			document.getElementById("remaining_lines").innerHTML += dynamic_line;
+	 		}
+
+	 	}
+
+	 	function generatePoem(){
+	 		// create and output title
+	 		var i = 0;
+	 		var t = document.getElementsByName("ibmInput")[0].value.toString().toLowerCase();
+	 		for(i=0;i<3;i++){
+	 			// add it to the poem_words dictionary,
+	 			// making sure if the title word appears twice, to actually increment the amount of times it appears
+	 			if (poem_words[dictionary[t[i]]] >= 1) {
+	 				poem_words[dictionary[t[i]]] = poem_words[dictionary[t[i]]] + 1;
+	 			}
+	 			else poem_words[dictionary[t[i]]] = 1;
+	 			// console.log("poem_words[dictionary[t[i]]]:" +poem_words[dictionary[t[i]]]);
+
+	 			// add word to title string for output with appropriate sizing
+	 			title += "<span style= \"font-size: " + poem_words[dictionary[t[i]]].toString() + "ex\">" + dictionary[t[i]].toString() + "</span> ";	
+	 			// add it to my title array, size irrelevant here
+	 			title_array.push(dictionary[t[i]].toString());
+
+	 		}
+	 		// output title
+	 		document.getElementById("title").innerHTML = title;
+
+	 		// create rest of the poem
+	 		// starting with the first three lines
+	 		for(let w in title_array){
+	 			for(let c in title_array[w]){
+	 				// add it to total word count dictionary:
+	 				if (poem_words[dictionary[title_array[w][c]]] >= 1) {
+	 					poem_words[dictionary[title_array[w][c]]] = poem_words[dictionary[title_array[w][c]]] + 1;
+	 				}
+	 				else poem_words[dictionary[title_array[w][c]]] = 1;
+	 				// console.log( poem_words[title_array[w][c]].toString() + " " + "POEM WORDS VALUE:"+poem_words[title_array[w][c]]);
+
+	 				// add words to lines for printing
+	 				// add to array for each line, so we can create the last set of lines from them
+	 				if (w == 0){ 
+	 					line1 += "<span style= \"font-size: " + poem_words[dictionary[title_array[w][c]]].toString() + "ex\">" + dictionary[title_array[w][c]].toString() + "</span> ";
+	 					line1_array.push(dictionary[title_array[w][c]].toString());
+	 				}
+	 				else if (w == 1){ 
+	 					line2 += "<span style= \"font-size:" + poem_words[dictionary[title_array[w][c]]].toString() + "ex\">" + dictionary[title_array[w][c]].toString() + "</span> ";
+	 					line2_array.push(dictionary[title_array[w][c]].toString());
+	 				}
+	 				else if (w == 2){
+	 					line3 += "<span style= \"font-size:" + poem_words[dictionary[title_array[w][c]]].toString() + "ex\">" + dictionary[title_array[w][c]].toString() + "</span> ";
+	 					line3_array.push(dictionary[title_array[w][c]].toString());
+	 				}
+	 			}
+	 		}
+	 		document.getElementById("line1").innerHTML = line1;
+	 		document.getElementById("line2").innerHTML = line2;
+	 		document.getElementById("line3").innerHTML = line3;
+
+	 		// and finally, the last lines made from lines 1, 2 and 3
+	 		poemFormula(line1_array);
+	 		poemFormula(line2_array);
+	 		poemFormula(line3_array);
+	 		}
+
+	 </script> 
+</html>
